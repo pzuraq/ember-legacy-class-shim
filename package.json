@@ -18,7 +18,7 @@
     "test": "ember try:each"
   },
   "dependencies": {
-    "babel-plugin-ember-legacy-class-constructor": "^0.1.2",
+    "babel-plugin-ember-legacy-class-constructor": "^0.1.3",
     "ember-cli-babel": "^6.3.0",
     "ember-cli-version-checker": "^2.0.0"
   },
