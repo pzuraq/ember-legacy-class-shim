@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pzuraq/ember-legacy-class-transform.svg?branch=master)](https://travis-ci.org/pzuraq/ember-legacy-class-transform)
+
 # ember-legacy-class-transform
 
 This addon adds a transform for using ES Classes with legacy versions of Ember (< 2.13.0).
