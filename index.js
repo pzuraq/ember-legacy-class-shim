@@ -57,7 +57,7 @@ module.exports = {
     let disableTransforms = parentOptions.emberDecorators && parentOptions.emberDecorators.disableTransforms;
 
     if (!this._registeredWithBabel && !disableTransforms) {
-      let emberChecker = new VersionChecker(this.app).forEmber();
+      let emberChecker = new VersionChecker(app).forEmber();
       let babelChecker = new VersionChecker(this.parent).for('ember-cli-babel', 'npm');
 
       if (babelChecker.satisfies('^6.0.0-beta.1')) {
