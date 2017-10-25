@@ -52,11 +52,14 @@ module.exports = {
       );
 
       this._registeredWithParent = true;
-    } else if (emberChecker.isAbove('2.13.0') && parent.isEmberCLIProject) {
-      // The transform is being used in an application, and no longer needed
-      app.project.ui.writeWarnLine(
-        'ember-legacy-class-transform: this transform is not needed for Ember >= 2.13.0'
-      );
+    } else if (emberChecker.isAbove('2.13.0')) {
+      if (parent.isEmberCLIProject) {
+        // The transform is being used in an application, and no longer needed
+        app.project.ui.writeWarnLine(
+          'ember-legacy-class-transform: this transform is not needed for Ember >= 2.13.0'
+        );
+      }
+
 
       this._registeredWithParent = true;
     }
