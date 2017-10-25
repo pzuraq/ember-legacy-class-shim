@@ -34,45 +34,39 @@ function hasPlugin(plugins, name) {
 module.exports = {
   name: 'ember-decorators',
 
-  init(parent, project) {
-    this._super.init.apply(this, arguments);
+  included(app) {
+    this._super.included.apply(this, arguments);
+
+    const parent = this.parent;
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberChecker = new VersionChecker({ project, root: project.root }).forEmber();
+    const emberChecker = new VersionChecker(app).forEmber();
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     const babelChecker = new VersionChecker(parent).for('ember-cli-babel', 'npm');
 
     if (!babelChecker.satisfies('^6.0.0-beta.1')) {
-      project.ui.writeWarnLine(
+      app.project.ui.writeWarnLine(
         'ember-legacy-class-transform: You are using an unsupported ember-cli-babel version, ' +
         'legacy class transform will not be included automatically'
       );
 
-      this._registeredWithBabel = true;
-    } else if (this.emberChecker.isAbove('2.13.0') && parent.isEmberCLIProject) {
+      this._registeredWithParent = true;
+    } else if (emberChecker.isAbove('2.13.0') && parent.isEmberCLIProject) {
       // The transform is being used in an application, and no longer needed
-      project.ui.writeWarnLine(
+      app.project.ui.writeWarnLine(
         'ember-legacy-class-transform: this transform is not needed for Ember >= 2.13.0'
       );
 
-      this._registeredWithBabel = true;
+      this._registeredWithParent = true;
     }
 
     // Parent can either be an Addon or Project. If it is a Project, then ember-decorators is
     // being included in a root level project and needs to register itself on the EmberApp or
     // EmberAddon's options instead
-    if (!parent.isEmberCLIProject) {
-      this.registerTransformWithParent(parent);
-    }
-  },
+    const trueParent = !parent.isEmberCLIProject ? parent : app;
 
-  included(app) {
-    this._super.included.apply(this, arguments);
-
-    // This hook only gets called from top level applications. If it is called and the addon
-    // has not already registered itself, it should register itself with the application
-    this.registerTransformWithParent(app);
+    this.registerTransformWithParent(trueParent);
   },
 
   /**
@@ -81,7 +75,7 @@ module.exports = {
    * @param {Addon|EmberAddon|EmberApp} parent
    */
   registerTransformWithParent(parent) {
-    if (this._registeredWithBabel) return;
+    if (this._registeredWithParent) return;
 
     const parentOptions = parent.options = parent.options || {};
     const EmberLegacyClassConstructor = requireTransform('babel-plugin-ember-legacy-class-constructor');
@@ -96,6 +90,6 @@ module.exports = {
       plugins.push(EmberLegacyClassConstructor);
     }
 
-    this._registeredWithBabel = true;
+    this._registeredWithParent = true;
   }
 };
