@@ -14,6 +14,7 @@ function requireTransform(transformName) {
   let pluginPath = require.resolve(`${transformName}/package`);
   let pluginBaseDir = path.dirname(pluginPath);
   plugin.baseDir = () => pluginBaseDir;
+  plugin._name = transformName;
 
   return plugin;
 }
@@ -21,7 +22,7 @@ function requireTransform(transformName) {
 function hasPlugin(plugins, name) {
   for (let maybePlugin of plugins) {
     let plugin = Array.isArray(maybePlugin) ? maybePlugin[0] : maybePlugin;
-    let pluginName = typeof plugin === 'string' ? plugin : plugin.name;
+    let pluginName = typeof plugin === 'string' ? plugin : plugin.name || plugin._name;
 
     if (pluginName === name) {
       return true;
@@ -81,7 +82,6 @@ module.exports = {
     if (this._registeredWithParent) return;
 
     const parentOptions = parent.options = parent.options || {};
-    const EmberLegacyClassConstructor = requireTransform('babel-plugin-ember-legacy-class-constructor');
 
     // Create babel options if they do not exist
     parentOptions.babel = parentOptions.babel || {};
@@ -89,7 +89,9 @@ module.exports = {
     // Create and pull off babel plugins
     const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
 
-    if (!hasPlugin(plugins, 'ember-legacy-class-constructor')) {
+    if (!hasPlugin(plugins, 'babel-plugin-ember-legacy-class-constructor')) {
+      const EmberLegacyClassConstructor = requireTransform('babel-plugin-ember-legacy-class-constructor');
+
       plugins.push(EmberLegacyClassConstructor);
     }
 
