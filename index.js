@@ -35,28 +35,28 @@ function hasPlugin(plugins, name) {
 module.exports = {
   name: 'ember-decorators',
 
-  included(app) {
+  included(parent) {
     this._super.included.apply(this, arguments);
 
-    const parent = this.parent;
+    const host = this._findHost();
 
     // Create a root level version checker for checking the Ember version later on
-    const emberChecker = new VersionChecker(app).forEmber();
+    const emberChecker = new VersionChecker(host).forEmber();
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     const babelChecker = new VersionChecker(parent).for('ember-cli-babel', 'npm');
 
     if (!babelChecker.satisfies('^6.0.0-beta.1')) {
-      app.project.ui.writeWarnLine(
+      host.project.ui.writeWarnLine(
         'ember-legacy-class-transform: You are using an unsupported ember-cli-babel version, ' +
         'legacy class transform will not be included automatically'
       );
 
       this._registeredWithParent = true;
     } else if (emberChecker.isAbove('2.13.0')) {
-      if (parent.isEmberCLIProject) {
+      if (parent === host) {
         // The transform is being used in an application, and no longer needed
-        app.project.ui.writeWarnLine(
+        host.project.ui.writeWarnLine(
           'ember-legacy-class-transform: this transform is not needed for Ember >= 2.13.0'
         );
       }
@@ -65,12 +65,7 @@ module.exports = {
       this._registeredWithParent = true;
     }
 
-    // Parent can either be an Addon or Project. If it is a Project, then ember-decorators is
-    // being included in a root level project and needs to register itself on the EmberApp or
-    // EmberAddon's options instead
-    const trueParent = !parent.isEmberCLIProject ? parent : app;
-
-    this.registerTransformWithParent(trueParent);
+    this.registerTransformWithParent(parent);
   },
 
   /**
@@ -96,5 +91,16 @@ module.exports = {
     }
 
     this._registeredWithParent = true;
+  },
+
+  _findHost() {
+    let current = this;
+    let app;
+
+    do {
+      app = current.app || app;
+    } while (current.parent.parent && (current = current.parent));
+
+    return app;
   }
 };
