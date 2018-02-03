@@ -11,7 +11,7 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "https://github.com/pzuraq/ember-legacy-class-transform",
   "scripts": {
     "build": "ember build",
     "start": "ember server",

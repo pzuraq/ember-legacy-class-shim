@@ -1,5 +1,10 @@
 [![Build Status](https://travis-ci.org/pzuraq/ember-legacy-class-transform.svg?branch=master)](https://travis-ci.org/pzuraq/ember-legacy-class-transform)
 
+# Deprecation Notice
+
+This transform has been deprecated in favor of the [ember-legacy-class-shim](https://github.com/pzuraq/ember-legacy-class-shim),
+which is overall a better solution to legacy class support in Ember.
+
 # ember-legacy-class-transform
 
 This addon adds a transform for using ES Classes with legacy versions of Ember (< 2.13.0).
