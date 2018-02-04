@@ -40,6 +40,10 @@ module.exports = {
 
     const host = this._findHost();
 
+    host.project.ui.writeWarnLine(
+      'ember-legacy-class-transform: This transform has been deprecated, please switch to ember-legacy-class-shim'
+    );
+
     // Create a root level version checker for checking the Ember version later on
     const emberChecker = new VersionChecker(host).forEmber();
 
