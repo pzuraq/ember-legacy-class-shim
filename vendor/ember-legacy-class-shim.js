@@ -1,5 +1,24 @@
 /* globals Ember, DS */
 (function() {
+  function _possibleConstructorReturn(self, call) {
+    return call && (typeof call === "object" || typeof call === "function") ? call : self;
+  }
+
+  function _inherits(subClass, superClass) {
+    subClass.prototype = Object.create(superClass && superClass.prototype, {
+      constructor: {
+        value: subClass,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+
+    if (superClass) {
+      Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    }
+  }
+
   var ExtendOverrideMixin = Ember.Mixin.create({
     extend: function() {
       if (Object.getPrototypeOf(this) === Function.prototype) {
@@ -9,8 +28,19 @@
       }
 
       // Create a simple wrapper class to defer to the rest of the prototype chain
-      // for native classes and classes that extend from native classes
-      var Class = class extends this {};
+      // for native classes and classes that extend from native classes. This is the
+      // output for creating classes from Babel, so it should be crosscompatible.
+      var Class = function (_ref) {
+        _inherits(Class, _ref);
+
+        function Class() {
+          return _possibleConstructorReturn(this, (Class.__proto__ || Object.getPrototypeOf(Class)).apply(this, arguments));
+        }
+
+        return Class;
+      }(this);
+
+
 
       for (var i = 0; i < arguments.length; i++) {
         Object.assign(Class.prototype, arguments[i]);
