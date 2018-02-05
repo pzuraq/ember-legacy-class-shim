@@ -2,21 +2,21 @@ import EmberObject from '@ember/object';
 
 import { module, test } from 'qunit';
 
-module('Trasform Test');
+module('Basic Test');
 
 test('Class constructor only gets called once with Ember Object', function(assert) {
   assert.expect(3);
 
   class Foo extends EmberObject {
     constructor() {
-      super();
+      super(...arguments);
       assert.ok(true);
     }
   }
 
   class Bar extends Foo {
     constructor() {
-      super();
+      super(...arguments);
       assert.ok(true);
     }
   }
@@ -36,7 +36,7 @@ test('Class constructor only gets called once with normal classes', function(ass
 
   class Bar extends Foo {
     constructor() {
-      super();
+      super(...arguments);
       assert.ok(true);
     }
   }
@@ -101,7 +101,7 @@ test('Class fields work with Ember Object (with constructor)', function(assert) 
     prop = 1;
 
     constructor() {
-      super();
+      super(...arguments);
       assert.ok(true);
     }
   }
@@ -110,7 +110,7 @@ test('Class fields work with Ember Object (with constructor)', function(assert) 
     anotherProp = 2;
 
     constructor() {
-      super();
+      super(...arguments);
       assert.ok(true);
     }
   }
@@ -130,4 +130,50 @@ test('Class fields work with Ember Object (with constructor)', function(assert) 
 
   assert.equal(bar.get('prop'), 1);
   assert.equal(bar.get('anotherProp'), 2);
+});
+
+
+test('Can extend from .extends', function(assert) {
+  assert.expect(3);
+
+  const Foo = EmberObject.extend({
+    init() {
+      this._super(...arguments);
+      assert.ok(true);
+    }
+  });
+
+  class Bar extends Foo {
+    constructor() {
+      super(...arguments);
+      assert.ok(true);
+    }
+  }
+
+  Foo.create();
+  Bar.create();
+});
+
+test('Class constructor call order is correct', function(assert) {
+  assert.expect(1);
+
+  let calls = [];
+
+  class Foo extends EmberObject {
+    constructor() {
+      calls.push('before-constructor');
+      super();
+      calls.push('after-constructor');
+    }
+
+    init() {
+      calls.push('before-init');
+      super.init(...arguments);
+      calls.push('after-init');
+    }
+  }
+
+  Foo.create();
+
+  assert.deepEqual(calls, ['before-constructor', 'before-init', 'after-init', 'after-constructor']);
 });

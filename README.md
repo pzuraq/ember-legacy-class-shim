@@ -1,15 +1,9 @@
-[![Build Status](https://travis-ci.org/pzuraq/ember-legacy-class-transform.svg?branch=master)](https://travis-ci.org/pzuraq/ember-legacy-class-transform)
+[![Build Status](https://travis-ci.org/pzuraq/ember-legacy-class-shim.svg?branch=master)](https://travis-ci.org/pzuraq/ember-legacy-class-shim)
 
-# Deprecation Notice
+# ember-legacy-class-shim
 
-This transform has been deprecated in favor of the [ember-legacy-class-shim](https://github.com/pzuraq/ember-legacy-class-shim),
-which is overall a better solution to legacy class support in Ember.
-
-# ember-legacy-class-transform
-
-This addon adds a transform for using ES Classes with legacy versions of Ember (< 2.13.0).
-It transforms the class's `constructor` function into `init`, which allows both the
-`constructor` and class fields to work.
+This addon adds a shim which reopens `EmberObject` and redefines `.extend`. This allows
+older versions of Ember to use ES Classes with some restrictions.
 
 ## Why is this needed?
 
@@ -22,72 +16,18 @@ internally in Ember, _never_ calls `super`.
 This means that when we define a class using `class` it's constructor never gets run.
 A side-effect of this is that class fields, which are assigned _in_ the constructor, do
 not get assigned. This substantially reduces the usefulness of class syntax and decorators
-since they rely substantially on class fields working as expected.
+since they rely on class fields working as expected.
 
-## So what does this do?
+## What does it fix?
 
-When combined with the class fields transform, this takes classes defined like so:
-
-```js
-class Foo {
-  bar = 'baz';
-
-  constructor() {
-    // do something
-  }
-}
-```
-
-And transforms them into this:
-
-```js
-class Foo {
-  constructor() {
-    if (!this.__didInit) {
-      this.init();
-    }
-  }
-
-  init() {
-    // do something
-    this.bar = 'baz';
-    this.__didInit = true;
-  }
-}
-```
-
-### Wait, why does the constructor still exist and call init if it doesn't work?
-
-It actually _does_ work when you make objects/classes outside of the standard Ember
-container lifecycle, so just doing `Foo.create()` for instance. The logic in place
-ensures that `init` only gets called once in all cases.
-
-### Ok, any other caveats?
-
-`init` is very similar to `constructor`, it gets called in the same context at
-_almost_ the same time. The key difference is that when using classes normally,
-the subclass's constructor gets called first` meaning it gets to do any setup it
-wants before calling `super`. `init`, on the other hand, only gets called after
-most of the setup has been done (if extending from `Ember.Object`).
-
-Ultimately, the code flow _before_ calling `super` in `constructor` will differ
-between legacy versions and modern versions of Ember. To avoid this, simply call
-`super` as the very first thing in any classes which extend `Ember.Object`.
-
-```js
-class Foo extends Ember.Object {
-  constructor(...args) {
-    super(...args);
-
-    // do some things
-  }
-}
-```
+This fixes the double extend problem only. Actually fixing `.extend` requires changes to
+CoreObject directly and won't be fixed until later versions of Ember. Once you start using
+native class syntax, you can't go back.
 
 ## Installation
 
 * `git clone <repository-url>` this repository
-* `cd ember-legacy-class-transform`
+* `cd ember-legacy-class-shim`
 * `npm install`
 
 ## Running

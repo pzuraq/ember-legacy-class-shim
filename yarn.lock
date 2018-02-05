@@ -623,10 +623,6 @@ babel-plugin-debug-macros@^0.1.10, babel-plugin-debug-macros@^0.1.11:
   dependencies:
     semver "^5.3.0"
 
-babel-plugin-ember-legacy-class-constructor@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/babel-plugin-ember-legacy-class-constructor/-/babel-plugin-ember-legacy-class-constructor-0.1.4.tgz#dfe715b9bdb66f6c7e9eccc620137c03b3fa89e0"
-
 babel-plugin-ember-modules-api-polyfill@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/babel-plugin-ember-modules-api-polyfill/-/babel-plugin-ember-modules-api-polyfill-2.0.1.tgz#baaf26dcebe2ed1de120021bc42be29f520497b3"
