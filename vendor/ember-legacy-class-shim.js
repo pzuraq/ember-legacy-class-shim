@@ -40,7 +40,8 @@
         return Class;
       }(this);
 
-
+      // Assign the name of the parent class for better logging and debugging
+      Object.defineProperty(Class, 'name', { value: this.name })
 
       for (var i = 0; i < arguments.length; i++) {
         Object.assign(Class.prototype, arguments[i]);
