@@ -2,6 +2,7 @@
 'use strict';
 
 const VersionChecker = require('ember-cli-version-checker');
+const browserslist = require('browserslist');
 
 module.exports = {
   name: 'ember-legacy-class-shim',
@@ -16,7 +17,13 @@ module.exports = {
     const emberChecker = new VersionChecker(host).forEmber();
 
     if (!emberChecker.isAbove('2.13.0')) {
-      host.import('vendor/ember-legacy-class-shim.js');
+      const browsers = browserslist(this.project.targets.browsers);
+
+      if (browsers.find((browser) => browser.includes('ie'))) {
+        host.import('vendor/ember-legacy-class-shim-ie.js');
+      } else {
+        host.import('vendor/ember-legacy-class-shim.js');
+      }
     } else if (parent === host) {
       // The shim is being used in an application, and no longer needed
       host.project.ui.writeWarnLine(
