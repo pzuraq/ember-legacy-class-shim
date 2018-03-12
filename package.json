@@ -1,6 +1,6 @@
 {
   "name": "ember-legacy-class-shim",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Backwards compatibility for ES classes in Ember",
   "keywords": [
     "ember-addon"
