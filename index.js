@@ -17,12 +17,16 @@ module.exports = {
     const emberChecker = new VersionChecker(host).forEmber();
 
     if (!emberChecker.isAbove('2.13.0')) {
-      const browsers = browserslist(this.project.targets.browsers);
+      if (this.project.targets) {
+        const browsers = browserslist(this.project.targets.browsers);
 
-      if (browsers.find((browser) => browser.includes('ie'))) {
-        host.import('vendor/ember-legacy-class-shim-ie.js');
+        if (browsers.find((browser) => browser.includes('ie'))) {
+          host.import('vendor/ember-legacy-class-shim-ie.js');
+        } else {
+          host.import('vendor/ember-legacy-class-shim.js');
+        }
       } else {
-        host.import('vendor/ember-legacy-class-shim.js');
+        host.import('vendor/ember-legacy-class-shim-ie.js');
       }
     } else if (parent === host) {
       // The shim is being used in an application, and no longer needed
