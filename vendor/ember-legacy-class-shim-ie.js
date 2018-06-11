@@ -40,8 +40,14 @@
         return Class;
       }(this);
 
-      // Assign the name of the parent class for better logging and debugging
-      Object.defineProperty(Class, 'name', { value: this.name || this.toString() })
+      try {
+        // Assign the name of the parent class for better logging and debugging
+        Object.defineProperty(Class, 'name', { value: this.name || this.toString(), writable: true, configurable: true });
+      } catch (e) {
+        // If you create an Ember component using the `class extends Component` syntax
+        // you might end up trying to create the property name twice on the same class
+        console.warn('Unable to update property \'name\'. This might happen on old browsers (for instance Safari 9)');
+      }
 
       for (var i = 0; i < arguments.length; i++) {
         Object.assign(Class.prototype, arguments[i]);
